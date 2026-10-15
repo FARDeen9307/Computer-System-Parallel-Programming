@@ -4,76 +4,93 @@
 
 using namespace std;
 
-long sumSer(long *a, long n) {
+long sumSer( long *a, long n) {
+
     long sum = 0;
-    for (long i = 0; i < n; i++)
+    for ( long i = 0; i < n; i++)
+
         sum += a[i];
     return sum;
+
 }
 
-long sumBroke(long *a, long n) {
+
+long sumBroke( long *a, long n) {
     long sum = 0;
     #pragma omp parallel for
-    for (long i = 0; i < n; i++)
+    for ( long i = 0; i < n; i++)
         sum += a[i];
     return sum;
+
 }
 
-long sumRed(long *a, long n) {
+long sumRed( long *a, long n) {
+
     long sum = 0;
     #pragma omp parallel for reduction(+:sum)
     for (long i = 0; i < n; i++)
         sum += a[i];
     return sum;
+
 }
 
+
 int main() {
+
     long sizes[] = {10000000, 100000000};
     int numSizes = 2;
 
-    for (int s = 0; s < numSizes; s++) {
+    for ( int s = 0; s < numSizes; s++) {
+
         long n = sizes[s];
         cout << "\n----------------------------------------\n";
         cout << "Testing N = " << n << endl;
 
         long *a = new long[n];
-        for (long i = 0; i < n; i++) {
+        for ( long i = 0; i < n; i++) {
             a[i] = 1;
+
         }
 
-        // Serial Time
+    
         double t1 = omp_get_wtime();
         long r1 = sumSer(a, n);
         double t2 = omp_get_wtime();
         double serialTime = t2 - t1;
         cout << "Serial Sum:     " << r1 << " | Time: " << serialTime << "s\n";
 
-        // Naive Broken Time
+        
         t1 = omp_get_wtime();
         long r2 = sumBroke(a, n);
         t2 = omp_get_wtime();
         cout << "Naive Sum (BRO): " << r2 << " | Time: " << t2 - t1 << "s\n";
 
-        // Reduction Time
+       
+
         t1 = omp_get_wtime();
         long r3 = sumRed(a, n);
         double t3 = omp_get_wtime();
         double redTime = t3 - t1;
         cout << "Reduction Sum:  " << r3 << " | Time: " << redTime << "s\n";
 
-        // Speedup Calculation for Reduction
+        
         double speedup = serialTime / redTime;
         cout << "Speedup (Red):  " << speedup << endl;
 
-        // Verification
-        if (r1 == r3) {
+        
+        if ( r1 == r3) {
             cout << "Verification:   SUCCESS\n";
-        } else {
+        }
+        
+        else {
+
             cout << "Verification:   FAILED\n";
         }
 
         delete[] a;
     }
+
+    
 
     return 0;
 }
