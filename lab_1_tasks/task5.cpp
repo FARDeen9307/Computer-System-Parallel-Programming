@@ -174,6 +174,10 @@ int main() {
 
 }
 
+
+
+
+
 /*
 g++ -fopenmp -O2 task5.cpp -o task5
 
